@@ -14,7 +14,7 @@
 <li>All your header files should be include guarded
 <li>Use system calls only when you need to (why?)
 </ul>
-<h3>Compilaion</h3>
+<h3>Compilation</h3>
 <p>All of the .c files along with a main.c file are to be compiled with gcc 4.8.4 on Ubuntu 14.04 LTS with the flags -Wall Werror -Wextra and -pedantic. The files will be compiled this way:</p>
 <ul>
 <li>gcc -Wall -Werror -Wextra -pedantic *.c -o hsh Execute $ ./hsh
