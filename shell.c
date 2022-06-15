@@ -1,73 +1,51 @@
 #include "shell.h"
-
 /**
- * free_data - frees data structure
- *
- * @datash: data structure
- * Return: no return
+ * main - Entry point for shell
+ * @argc: Number of arguments
+ * @argv: string of arguments
+ * @env: enviromet variable
+ * Return: 0 (Return value)
  */
-void free_data(data_shell *datash)
+int main(int __attribute__((unused))argc, char **argv, char **env)
 {
-	unsigned int i;
+	int status_output = 0, read = 1, counter = 0;
 
-	for (i = 0; datash->_environ[i]; i++)
+	while (read)
 	{
-		free(datash->_environ[i]);
+		char *command_line = NULL, **argm = NULL;
+		size_t line_size = 0;
+
+		if (isatty(STDIN_FILENO) == 1)
+			write(STDOUT_FILENO, "#cisfun$ ", 10);
+		signal(SIGINT, signal_c);
+		read = getline(&command_line, &line_size, stdin);
+		if (read < 0)
+		{
+			free(command_line);
+			exit(status_output);
+		}
+		if (read == 1)
+		{
+			free(command_line);
+			continue;
+		}
+		if (read != EOF)
+		{
+			counter++;
+			_strtok(command_line, "\n");
+			if (_myexit(command_line) == 0)
+				return (status_output);
+			if (_myenv(command_line, counter, argv, env) == 0)
+				continue;
+			argm = splitline(command_line);
+			if (argm[0] == NULL)
+			{
+				free(command_line), free(argm);
+				continue;
+			}
+			status_output = execute_process(argm, argv, counter);
+		}
+		free(command_line), free(argm);
 	}
-
-	free(datash->_environ);
-	free(datash->pid);
-}
-
-/**
- * set_data - Initialize data structure
- *
- * @datash: data structure
- * @av: argument vector
- * Return: no return
- */
-void set_data(data_shell *datash, char **av)
-{
-	unsigned int i;
-
-	datash->av = av;
-	datash->input = NULL;
-	datash->args = NULL;
-	datash->status = 0;
-	datash->counter = 1;
-
-	for (i = 0; environ[i]; i++)
-		;
-
-	datash->_environ = malloc(sizeof(char *) * (i + 1));
-
-	for (i = 0; environ[i]; i++)
-	{
-		datash->_environ[i] = _strdup(environ[i]);
-	}
-
-	datash->_environ[i] = NULL;
-	datash->pid = aux_itoa(getpid());
-}
-
-/**
- * main - Entry point
- *
- * @ac: argument count
- * @av: argument vector
- *
- * Return: 0 on success.
- */
-int main(int ac, char **av)
-{
-	data_shell datash;
-	(void) ac;
-
-	signal(SIGINT, get_sigint);
-	set_data(&datash, av);
-	shell_loop(&datash);
-	free_data(&datash);
-	if (datash.status < 0)
-		return (255);
-	return (datash.status);
+	return (status_output);
 }
