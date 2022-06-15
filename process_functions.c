@@ -1,4 +1,4 @@
-#include "holberton.h"
+#include "main.h"
 /**
  * check_path - check if argumnt is already a path
  * @argm: entry argument
