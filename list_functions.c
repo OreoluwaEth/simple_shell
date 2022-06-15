@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "holberton.h"
 /**
  * _link - built linked list with directories
  * @a: PATH
@@ -63,3 +63,4 @@ void free_list(link_t *head)
 		free(temp);
 	}
 }
+
